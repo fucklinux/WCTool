@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1, user-scalable=0">
+    <link rel="stylesheet" href="mdui-1.0.1/css/mdui.min.css">
+    <script src="mdui-1.0.1/js/mdui.min.js"></script>
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <title>WebCat 共享空间助手</title>
+    <script src="js/jq.js"></script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink mdui-appbar-with-toolbar">
+    <div class="mdui-appbar mdui-appbar-fixed" onclick="javascript:window.scrollTo(0,0);">
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="javascript:;" class="mdui-typo-title">WebCat 共享空间助手</a>
+        </div>
+    </div>
+    <p class="mdui-text-color-red mdui-text-center" style="padding: 16px;">本工具仅供学习研究使用，请于下载后 24 小时内删除。</p>
+    <div style="margin: 32px 16px;">
+        <div class="mdui-card mdui-center" style="max-width: 512px;" id="zc">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">注册</div>
+                <div class="mdui-card-primary-subtitle">注册一个 WebCat 共享空间账户</div>
+            </div>
+            <div class="mdui-card-content">
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:signup();" id="yjzc">一键注册</button>
+                <p class="mdui-text-center" id="username" onclick="javascript:copyHandle(window.sessionStorage.getItem('randomusername'));mdui.snackbar('用户名已复制到剪贴板');"></p>
+                <p class="mdui-text-center" id="password" onclick="javascript:copyHandle(window.sessionStorage.getItem('randompassword'));mdui.snackbar('密码已复制到剪贴板');"></p>
+                <p class="mdui-text-center" id="xzcs" style="display: none;">您已获得 2 个源码下载次数。</p>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 32px 16px;">
+        <div class="mdui-card mdui-center" style="max-width: 512px;">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">登录</div>
+                <div class="mdui-card-primary-subtitle">登录上方的共享空间账户</div>
+            </div>
+            <div class="mdui-card-content">
+                <p class="mdui-text-center">请在下方的 iframe 中登录共享空间。<br>如果您在使用 WebCat 浏览本页，完成登录后即可下载源码。</p>
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:signin();">转到登录页</button>
+                <iframe src="http://space.webcat.top/" style="border: none;margin: 16px 0;height: 512px;" class="mdui-center" id="iframe"></iframe>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 32px 16px;">
+        <div class="mdui-card mdui-center" style="max-width: 512px;">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">账户详情</div>
+                <div class="mdui-card-primary-subtitle">查看共享空间账户详细信息</div>
+            </div>
+            <div class="mdui-card-content">
+                <div class="mdui-typo">
+                    <p class="mdui-text-center" id="zhxq">请先<a href="#zc">注册</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="margin: 32px 16px;">
+        <div class="mdui-card mdui-center" style="max-width: 512px;">
+            <div class="mdui-card-primary">
+                <div class="mdui-card-primary-title">下载源码</div>
+                <div class="mdui-card-primary-subtitle">共享空间源码下载接口</div>
+            </div>
+            <div class="mdui-card-content">
+                <p class="mdui-text-center">如果您想在 WebCat 之外下载源码，则使用本方法。<br>ID：源码的唯一编号，进入欲下载源码的详情页，在 URL 中可查看。<br>Token：用于对账户进行鉴权，在上方“账户详情”中可查看。<br>解析成功后会返回源码信息，“fileUrl”后面的内容即为源码下载地址。</p>
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xbqydk();">新标签页打开共享空间</button>
+
+                <form onsubmit="return false;">
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">code</i>
+                        <label class="mdui-textfield-label">ID</label>
+                        <input class="mdui-textfield-input" id="id"></input>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                        <i class="mdui-icon material-icons">lock</i>
+                        <label class="mdui-textfield-label">Token</label>
+                        <input class="mdui-textfield-input" id="token"></input>
+                    </div>
+                </form>
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xzym();">下载源码</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var loginUrl = "http://source.webcat.top/user/register";
+        window.sessionStorage.setItem('signedup', 0);
+
+        function signup() {
+            document.getElementById('yjzc').disabled = "disabled";
+            var randomip = Math.trunc(Math.round(Math.random() * 10000000000));
+            var randomusername = Math.trunc(Math.round(Math.random() * 10000000));
+            var randompassword = "000000" + Math.trunc(Math.round(Math.random() * 100000));
+            window.sessionStorage.setItem('randomusername', randomusername);
+            window.sessionStorage.setItem('randompassword', randompassword);
+            $.ajax({
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-Forwarded-For", randomip);
+                },
+                url: loginUrl,
+                type: "POST",
+                data: {
+                    "username": randomusername,
+                    "password": randompassword
+                },
+                async: true,
+                success(data) {
+                    document.getElementById('yjzc').disabled = "";
+                    if (data.success) {
+                        mdui.snackbar("注册成功");
+                        document.getElementById('username').innerHTML = "用户名：" + randomusername;
+                        document.getElementById('password').innerHTML = "密码：" + randompassword;
+                        document.getElementById('xzcs').style.display = "block";
+                        document.getElementById('zhxq').innerHTML = JSON.stringify(data.data);
+                        window.sessionStorage.setItem('zhxq', JSON.stringify(data.data));
+                        if (window.sessionStorage.getItem('signedup') == 0) {
+                            document.getElementById('zhxq').addEventListener("click", function() {
+                                copyHandle(window.sessionStorage.getItem('zhxq'));
+                                mdui.snackbar('账户详情已复制到剪贴板');
+                            });
+                        }
+                        window.sessionStorage.setItem('signedup', 1);
+                        var url = "http://space.webcat.top/user_info.html";
+                        if (version == "5.21") {
+                            iapp.fn('source.showDetail("' + url + '")');
+                            iapp.fn('webcat.exit()');
+                            return;
+                        }
+                        window.location.href = "index.html?appVersion=" + version + "&isDark=" + isDark;
+                    } else {
+                        mdui.alert(data.message);
+                    }
+                }
+            });
+        }
+
+        function signin() {
+            document.getElementById('iframe').src = "http://space.webcat.top/login.html";
+        }
+
+        function xbqydk() {
+            window.open("http://space.webcat.top/", '_blank').location;
+        }
+
+        function xzym() {
+            location.href = "http://source.webcat.top/source/querySourceUrlById?id=" + document.getElementById('id').value + "&token=" + document.getElementById('token').value;
+        }
+        document.getElementById('token').addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                xzym();
+            }
+        })
+
+        function copyHandle(content) {
+            let copy = (e) => {
+                e.preventDefault()
+                e.clipboardData.setData('text/plain', content)
+                document.removeEventListener('copy', copy)
+            }
+            document.addEventListener('copy', copy)
+            document.execCommand("Copy");
+        }
+    </script>
+</body>
+
+</html>
