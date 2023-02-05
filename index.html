@@ -26,7 +26,7 @@
         <div class="mdui-card mdui-center" style="max-width: 512px;" id="zc">
             <div class="mdui-card-primary">
                 <div class="mdui-card-primary-title">注册</div>
-                <div class="mdui-card-primary-subtitle">注册一个 WebCat 共享空间账户</div>
+                <div class="mdui-card-primary-subtitle">注册一个共享空间账户</div>
             </div>
             <div class="mdui-card-content">
                 <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:signup();" id="yjzc">一键注册</button>
@@ -43,7 +43,7 @@
                 <div class="mdui-card-primary-subtitle">登录上方的共享空间账户</div>
             </div>
             <div class="mdui-card-content">
-                <p class="mdui-text-center">请在下方的 iframe 中登录共享空间。<br>如果您在使用 WebCat 浏览本页，完成登录后即可下载源码。</p>
+                <p class="mdui-text-center">请在下方的 iframe 中登录共享空间。<br>如果您在使用 WebCat 浏览本页，完成登录后即可下载源码；不使用 WebCat 则跳过此步。</p>
                 <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:signin();">转到登录页</button>
                 <iframe src="http://space.webcat.top/" style="border: none;margin: 16px 0;height: 512px;" class="mdui-center" id="iframe"></iframe>
             </div>
@@ -53,7 +53,7 @@
         <div class="mdui-card mdui-center" style="max-width: 512px;">
             <div class="mdui-card-primary">
                 <div class="mdui-card-primary-title">账户详情</div>
-                <div class="mdui-card-primary-subtitle">查看共享空间账户详细信息</div>
+                <div class="mdui-card-primary-subtitle">查看共享空间账户原始数据</div>
             </div>
             <div class="mdui-card-content">
                 <div class="mdui-typo">
@@ -69,7 +69,7 @@
                 <div class="mdui-card-primary-subtitle">共享空间源码下载接口</div>
             </div>
             <div class="mdui-card-content">
-                <p class="mdui-text-center">如果您想在 WebCat 之外下载源码，则使用本方法。<br>ID：源码的唯一编号，进入欲下载源码的详情页，在 URL 中可查看。<br>Token：用于对账户进行鉴权，在上方“账户详情”中可查看。<br>解析成功后会返回源码信息，“fileUrl”后面的内容即为源码下载地址。</p>
+                <p class="mdui-text-center">如果您想在 WebCat 之外下载源码，则使用本方法。<br>ID：源码的唯一编号，进入欲下载源码的详情页，在 URL 中可查看。<br>Token：用于对账户进行鉴权，注册后会自动填写。<br>如果提示“鉴权失败”或“免费下载次数已用完”，注册一个新账号即可。</p>
                 <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xbqydk();">新标签页打开共享空间</button>
 
                 <form onsubmit="return false;">
@@ -79,12 +79,12 @@
                         <input class="mdui-textfield-input" id="id"></input>
                     </div>
                     <div class="mdui-textfield mdui-textfield-floating-label">
-                        <i class="mdui-icon material-icons">lock</i>
+                        <i class="mdui-icon material-icons">vpn_key</i>
                         <label class="mdui-textfield-label">Token</label>
                         <input class="mdui-textfield-input" id="token"></input>
                     </div>
                 </form>
-                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xzym();">下载源码</button>
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xzym();" id="xzym">下载源码</button>
             </div>
         </div>
     </div>
@@ -119,6 +119,8 @@
                         document.getElementById('xzcs').style.display = "block";
                         document.getElementById('zhxq').innerHTML = JSON.stringify(data.data);
                         window.sessionStorage.setItem('zhxq', JSON.stringify(data.data));
+                        var userInfo = JSON.parse(JSON.stringify(data.data));
+                        document.getElementById('token').value = userInfo.token;
                         if (window.sessionStorage.getItem('signedup') == 0) {
                             document.getElementById('zhxq').addEventListener("click", function() {
                                 copyHandle(window.sessionStorage.getItem('zhxq'));
@@ -126,15 +128,8 @@
                             });
                         }
                         window.sessionStorage.setItem('signedup', 1);
-                        var url = "http://space.webcat.top/user_info.html";
-                        if (version == "5.21") {
-                            iapp.fn('source.showDetail("' + url + '")');
-                            iapp.fn('webcat.exit()');
-                            return;
-                        }
-                        window.location.href = "index.html?appVersion=" + version + "&isDark=" + isDark;
                     } else {
-                        mdui.alert(data.message);
+                        mdui.snackbar(data.message);
                     }
                 }
             });
@@ -149,7 +144,20 @@
         }
 
         function xzym() {
-            location.href = "http://source.webcat.top/source/querySourceUrlById?id=" + document.getElementById('id').value + "&token=" + document.getElementById('token').value;
+            document.getElementById('xzym').disabled = "disabled";
+            var getSourceInfo = new XMLHttpRequest();
+            getSourceInfo.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var sourceInfo = JSON.parse(this.responseText);
+                    mdui.snackbar(sourceInfo.message);
+                    document.getElementById('xzym').disabled = "";
+                    location.href = sourceInfo.data.fileUrl;
+                }
+            };
+            getSourceInfo.open("GET", "http://source.webcat.top/source/querySourceUrlById?id=" + document.getElementById('id').value + "&token=" + document.getElementById('token').value, true);
+            var randomip = Math.trunc(Math.round(Math.random() * 10000000000));
+            getSourceInfo.setRequestHeader("X-Forwarded-For", randomip);
+            getSourceInfo.send();
         }
         document.getElementById('token').addEventListener("keyup", function(event) {
             event.preventDefault();
