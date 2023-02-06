@@ -94,7 +94,7 @@
 
         function signup() {
             document.getElementById('yjzc').disabled = "disabled";
-            var randomip = Math.trunc(Math.round(Math.random() * 10000000000));
+            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." +  Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
             var randomusername = Math.trunc(Math.round(Math.random() * 10000000));
             var randompassword = "000000" + Math.trunc(Math.round(Math.random() * 100000));
             window.sessionStorage.setItem('randomusername', randomusername);
@@ -155,7 +155,7 @@
                 }
             };
             getSourceInfo.open("GET", "http://source.webcat.top/source/querySourceUrlById?id=" + document.getElementById('id').value + "&token=" + document.getElementById('token').value, true);
-            var randomip = Math.trunc(Math.round(Math.random() * 10000000000));
+            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." +  Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
             getSourceInfo.setRequestHeader("X-Forwarded-For", randomip);
             getSourceInfo.send();
         }
