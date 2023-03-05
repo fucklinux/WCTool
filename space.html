@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=0">
+    <link rel="stylesheet" href="mdui-1.0.1/css/mdui.min.css">
+    <script src="mdui-1.0.1/js/mdui.min.js"></script>
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <title>WebCat共享空间</title>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body class="mdui-theme-primary-indigo mdui-theme-accent-pink mdui-appbar-with-toolbar">
+    <div class="mdui-appbar mdui-appbar-fixed" onclick="javascript:window.scrollTo(0,0);">
+        <div class="mdui-toolbar mdui-color-theme">
+            <a class="mdui-typo-title">WebCat共享空间</a>
+        </div>
+    </div>
+    <div style="margin: 16px;text-align: center;">
+        <div class="mdui-table-fluid">
+            <table class="mdui-table">
+                <thead>
+                    <tr>
+                        <th>源码编号</th>
+                        <th>用户编号</th>
+                        <th>类型编号</th>
+                        <th>图标</th>
+                        <th>名称</th>
+                        <th>包名</th>
+                        <th>版本名称</th>
+                        <th>版本代码</th>
+                        <th>图片</th>
+                        <th>内容</th>
+                        <th>文件 URL</th>
+                        <th>文件大小</th>
+                        <th>IP</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="list">
+                </tbody>
+            </table>
+        </div>
+        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent" style="margin: 8px;" onclick="javascript:loadMore();" id="loadButton" disabled="disabled">加载更多</button>
+    </div>
+    <script>
+        page = 1;
+        limit = 10;
+        var x = "";
+
+        function load(page, limit) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    myObj = JSON.parse(this.responseText);
+                    for (i = 0; i < myObj.data.list.length; i++) {
+                        x += "<tr><th>" + myObj.data.list[i].id + "</th>";
+                        x += "<th>" + myObj.data.list[i].uid + "</th>";
+                        x += "<th>" + myObj.data.list[i].typeId + "</th>";
+                        x += "<th><img src='" + myObj.data.list[i].iconUrl + "' style='width: 64px;height: 64px;'></th>";
+                        x += "<th>" + myObj.data.list[i].name + "</th>";
+                        x += "<th>" + myObj.data.list[i].packageName + "</th>";
+                        x += "<th>" + myObj.data.list[i].versionName + "</th>";
+                        x += "<th>" + myObj.data.list[i].versionCode + "</th>";
+                        x += "<th><img src='" + JSON.parse(myObj.data.list[i].imgUrls) + "' style='width: 90px;height: 160px;'></th>";
+                        x += "<th>" + myObj.data.list[i].content + "</th>";
+                        x += "<th>" + myObj.data.list[i].fileUrl + "</th>";
+                        x += "<th>" + myObj.data.list[i].fileSize + "</th>";
+                        x += "<th>" + myObj.data.list[i].ip + "</th>";
+                        x += "<th>" + myObj.data.list[i].createTime + "</th>";
+                        x += "<th>" + myObj.data.list[i].status + "</th>";
+                        x += "<th><a class='mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent' href='http://space.webcat.top/page/detail.html?id=" + myObj.data.list[i].id + "'>进入详情页</a></th></tr>";
+                    }
+                    document.getElementById("list").innerHTML = x;
+                    loadButton.disabled = "";
+                }
+            };
+            xmlhttp.open("GET", "http://source.webcat.top/source/querySourceCodeList?typeId=&name=&page=" + page + "&limit=" + limit, true);
+            xmlhttp.send();
+        }
+        load(page, limit);
+        var loadButton = document.getElementById('loadButton');
+
+        function loadMore() {
+            loadButton.disabled = "disabled";
+            page += 1;
+            load(page, limit);
+        }
+    </script>
+</body>
+
+</html>

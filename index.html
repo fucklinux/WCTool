@@ -18,7 +18,7 @@
 <body class="mdui-theme-primary-indigo mdui-theme-accent-pink mdui-appbar-with-toolbar">
     <div class="mdui-appbar mdui-appbar-fixed" onclick="javascript:window.scrollTo(0,0);">
         <div class="mdui-toolbar mdui-color-theme">
-            <a href="javascript:;" class="mdui-typo-title">WebCat 共享空间助手</a>
+            <a class="mdui-typo-title">WebCat 共享空间助手</a>
         </div>
     </div>
     <p class="mdui-text-color-red mdui-text-center" style="padding: 16px;">本工具仅供学习研究使用，请于下载后 24 小时内删除。</p>
@@ -71,7 +71,7 @@
             <div class="mdui-card-content">
                 <p class="mdui-text-center">如果您想在 WebCat 之外下载源码，则使用本方法。<br>ID：源码的唯一编号，进入欲下载源码的详情页，在 URL 中可查看。<br>Token：用于对账户进行鉴权，注册后会自动填写。<br>如果提示“鉴权失败”或“免费下载次数已用完”，注册一个新账号即可。</p>
                 <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xbqydk();">新标签页打开共享空间</button>
-
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-center" onclick="javascript:xbqydkzz();" style="margin-top: 16px;">新标签页打开共享空间（自制）</button>
                 <form onsubmit="return false;">
                     <div class="mdui-textfield mdui-textfield-floating-label">
                         <i class="mdui-icon material-icons">code</i>
@@ -94,7 +94,7 @@
 
         function signup() {
             document.getElementById('yjzc').disabled = "disabled";
-            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." +  Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
+            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
             var randomusername = Math.trunc(Math.round(Math.random() * 10000000));
             var randompassword = "000000" + Math.trunc(Math.round(Math.random() * 100000));
             window.sessionStorage.setItem('randomusername', randomusername);
@@ -143,6 +143,10 @@
             window.open("http://space.webcat.top/", '_blank').location;
         }
 
+        function xbqydkzz() {
+            window.open("space.html", '_blank').location;
+        }
+
         function xzym() {
             document.getElementById('xzym').disabled = "disabled";
             var getSourceInfo = new XMLHttpRequest();
@@ -155,7 +159,7 @@
                 }
             };
             getSourceInfo.open("GET", "http://source.webcat.top/source/querySourceUrlById?id=" + document.getElementById('id').value + "&token=" + document.getElementById('token').value, true);
-            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." +  Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
+            var randomip = Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 100)) + "." + Math.trunc(Math.round(Math.random() * 10)) + "." + Math.trunc(Math.round(Math.random() * 100));
             getSourceInfo.setRequestHeader("X-Forwarded-For", randomip);
             getSourceInfo.send();
         }
